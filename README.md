@@ -1,2 +1,2 @@
 # COMPHYS
-reop of computation physics course
+repo for computation physics course

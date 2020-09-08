@@ -15,11 +15,10 @@ int main(int argc, char **argv)
   float expon; 
   float factorial;
 
-  for(int i; i<=argc; i++){
+  for(int i=1; i<argc; i++){
     expon=1.0;
     factorial = 1.0;
     std::istringstream stream(argv[i]);
-    
     if (stream >> x) {
       for(int n=1; n<100; n++){
         factorial *= n;

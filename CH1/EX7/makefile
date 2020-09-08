@@ -1,10 +1,10 @@
 OFILES=parse.o add.o print.o
-
+CXXFLAGS = -fPIC 
 plus:main.o libPlus.so
-	c++ -shared -fPIC -o $@ $< -L. -lPlus
+	c++  -fPIC -o $@ $< -L. -lPlus
 
 libPlus.so:$(OFILES)
-	ar rc $@ $?
+	c++ -shared -o  $@ $?
 
 clean:
 	rm -f *.so *.o plus *~

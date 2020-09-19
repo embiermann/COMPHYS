@@ -1,13 +1,9 @@
 #include <iostream>
 #include <Eigen/Dense>
 
-class Parallelpiped{
+struct Parallelpiped{
 
- public:
-
-  // Constructor
-  Parallelpiped (Eigen::MatrixXd M):
-    M(M) {}
+  Eigen::Matrix3d M;
 
   // Return Components
   Eigen::Vector3d getA() const {return M.col(0);}
@@ -25,8 +21,5 @@ class Parallelpiped{
   // Volume from matrix
   double matrixVol() { return M.determinant();}
 
- private:
-
-  Eigen::MatrixXd M;
   
 };

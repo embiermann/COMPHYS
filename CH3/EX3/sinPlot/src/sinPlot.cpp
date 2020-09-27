@@ -16,11 +16,13 @@ int main (int argc, char * * argv) {
 
   // Automatically generated:-------------------------:
 
-  std::string usage= std::string("usage: ") + argv[0]; 
-  if (argc!=1) {
+  std::string usage= std::string("usage: ") + argv[0] + " I (1 or 2) " ; 
+  if (argc!=2) {
     std::cout << usage << std::endl;
+    exit(0);
   }
-
+  int i=atoi(argv[1]);
+  
 
   QApplication     app(argc,argv);
   
@@ -33,10 +35,10 @@ int main (int argc, char * * argv) {
   QObject::connect(quitAction, SIGNAL(triggered()), &app, SLOT(quit()));
   
   PRectF rect;
-  rect.setXmin(0.0);
-  rect.setXmax(1.0);
-  rect.setYmin(0.0);
-  rect.setYmax(1.0);
+  rect.setXmin(-5.0);
+  rect.setXmax(5.0);
+  rect.setYmin(-1.2);
+  rect.setYmax(1.2);
   
 
   PlotView view(rect);
@@ -44,9 +46,15 @@ int main (int argc, char * * argv) {
 
   // My Code
   std::string title;
-  switch(1)
+
+  Genfun::Variable X;
+  Genfun::Sin    sin;
+  PlotFunction1D pfunc1=sin(X);
+  PlotFunction1D pfunc2=sin(5*X);;
+
+  switch(i)
   {
-    case(1): PlotFunction1D pfunc1=Genfun::Sin();
+    case 1:
       {
         title = "Sin(x)";
         PlotFunction1D::Properties prop;
@@ -56,13 +64,9 @@ int main (int argc, char * * argv) {
       // Add to plotter
       view.add(&pfunc1);
       break;
-
-    case(2): PlotFunction1D pfunc2=Genfun::Sin();
+    case 2:
       {
-        //Genfun::Variable X;
-        //Genfun::Sin() sin;
-        //pfunc = Genfun::GENFUNCTION sin(5.0*X);
-        title = "Sin(5x)";
+         title = "Sin(5x)";
         PlotFunction1D::Properties prop;
         prop.pen.setWidth(3);
         pfunc2.setProperties(prop);

@@ -20,7 +20,7 @@
 #include <cmath>
 #include "QatPlotting/PlotPoint.h"
 #include "QatPlotting/PlotOrbit.h"
-#include "QatGenericFunctions/InterpolatingFunction.h"
+#include "QatGenericFunctions/CubicSplinePolynomial.h"
 #include "QatGenericFunctions/Sin.h"
 #include "QatGenericFunctions/Cos.h"
 
@@ -117,8 +117,8 @@ int main (int argc, char * * argv) {
   view.add(&SWI);
 
   // Interpolate
-  Genfun::InterpolatingFunction ROUTE;
-  double origX = 0.;
+  Genfun::CubicSplinePolynomial ROUTE;
+  double origX = 240.; // JFB
   double origY = 0.;
   double r, phi, delX, delY;
   for(int i=0; i<X.size(); i++){
@@ -126,7 +126,8 @@ int main (int argc, char * * argv) {
     delY = Y[i] - origY;
     
     r = sqrt(delX*delX + delY*delY);
-    phi = 2.*M_PI - atan(delY/delX);
+    phi = atan2(delY,delX); // JFB you can use the atan2 function (man atan2)
+    
     //std::cout<<"phi = " << phi << "\tn";
     //std::cout<<"r = " << r << "\n";
 
@@ -134,9 +135,9 @@ int main (int argc, char * * argv) {
   }
 
   Genfun::Variable Phi;
-  Genfun::GENFUNCTION fX=ROUTE(Phi)*Genfun::Cos()(Phi);
-  Genfun::GENFUNCTION fY=ROUTE(Phi)*Genfun::Sin()(Phi);
-  PlotOrbit pF(fX, fY, 5., 7.);
+  Genfun::GENFUNCTION fX=ROUTE(Phi)*Genfun::Cos()(Phi)+origX;
+  Genfun::GENFUNCTION fY=ROUTE(Phi)*Genfun::Sin()(Phi)+origY;
+  PlotOrbit pF(fX, fY, .36, 2.1);
   {
     PlotOrbit::Properties prop;
     prop.pen.setWidth(3);

@@ -3,5 +3,5 @@
 #include "QatGenericFunctions/Exp.h"
 #include <cmath>
 
-Genfun::GENFUNCTION Phin(unsigned int n);
+Genfun::FunctionNoop Phin(unsigned int n);
 

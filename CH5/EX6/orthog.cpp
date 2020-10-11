@@ -15,12 +15,12 @@ int main(){
       {
 	GENFUNCTION P1=Phin(i);
 	GENFUNCTION P2=Phin(j);
-	GENFUNCTION f=P1()*P2()
+	GENFUNCTION f=P1*P2;
 
 	GaussHermiteRule rule(4);
 	GaussIntegrator integrator(rule);
 
-	A(i)(j) = integrator(f);
+	A(i,j) = integrator(f);
       }
 
   std::cout << A << std::endl;

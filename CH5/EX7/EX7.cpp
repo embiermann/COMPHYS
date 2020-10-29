@@ -2,12 +2,12 @@
 #include "QatGenericFunctions/Variable.h"
 #include "QatGenericFunctions/FixedConstant.h"
 #include "phiMatrix.h"
-
+#include <iomanip>
 int main(){
   using namespace Genfun;
 
   const double n=10;
-  
+  std::cout << std::fixed;  
   // PART A
   std::cout<<"Part A, X \n"<<std::endl;
   Variable X;

@@ -18,7 +18,7 @@ Eigen::Matrix<double,5,5> phiMatrix(Genfun::GENFUNCTION A, unsigned int n,
 	Genfun::GENFUNCTION f=Phin(i)*A*phijP;
         matrix(i,j)=integral(f,n);
       }
-      else if(nderiv==1){
+      else if(nderiv==2){
 	Genfun::GENFUNCTION phijPP=(phij.prime()).prime();
 	Genfun::GENFUNCTION f=Phin(i)*A*phijPP;
         matrix(i,j)=integral(f,n);

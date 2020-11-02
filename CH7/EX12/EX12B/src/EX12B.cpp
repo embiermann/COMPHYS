@@ -64,10 +64,10 @@ int main (int argc, char * * argv) {
   // Get Data
   EngineType e;
   std::uniform_real_distribution<double> x(0,1.);
-  Hist1D hist("DIST",100,0.,1.);
+  Hist1D hist("DIST",200,0.,200);
   for (int i=0;i<1000000;i++){
     double y=S(x(e));
-    hist.accumulate(y);
+    if (finite(y)) hist.accumulate(y);
   }
 
   // Plot

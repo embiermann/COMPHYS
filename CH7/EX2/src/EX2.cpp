@@ -17,7 +17,7 @@
 
 typedef std::mt19937 EngineType;
 
-double f(double x){ return 2./sqrt(M_PI) * x * exp(-x); }
+double f(double x){ return 2./sqrt(M_PI) * sqrt(x) * exp(-x); }
 
 int main (int argc, char * * argv) {
 
@@ -50,34 +50,37 @@ int main (int argc, char * * argv) {
 
   //PlotView view(rect);
 
-  // Plot Distribution
-  
-  PlotFunction1D pF=F1D(f);
-  {
-    PlotFunction1D::Properties prop;
-    prop.pen.setWidth(3);
-    pF.setProperties(prop);
-  }
 
   // Create data and plot histogram
   EngineType e;
   Hist1D histogram ("MVD", 100, 0.0, 10.0);
   
-  std::gamma_distribution<double> g(2.0);
+  std::gamma_distribution<double> g(3./2.);
   for (int i=0;i<100000;i++){
-    double x = 2./sqrt(M_PI) * g(e);
+    double x = g(e);
     histogram.accumulate(x);
   }
 
   // Normalize
-  double max = 2./(sqrt(M_PI)*exp(1));
-  histogram *= max/histogram.maxContents();
+  //  double max = 2./(sqrt(M_PI)*exp(1));
+  histogram *= 1/histogram.sum();
 
   PlotHist1D pH=histogram;
   
   PlotView view(pH.rectHint());
   window.setCentralWidget(&view);
 
+  // Plot Distribution
+  
+  PlotFunction1D pF=F1D(f)*histogram.binWidth();
+  {
+    PlotFunction1D::Properties prop;
+    prop.pen.setWidth(3);
+    pF.setProperties(prop);
+  }
+
+
+  
   // Add to plot
   view.add(&pF);
   view.add(&pH);

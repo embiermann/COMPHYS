@@ -9,12 +9,11 @@
 #include <string>
 
 #include "QatGenericFunctions/Variable.h"
+#include "QatGenericFunctions/ButcherTableau.h"
 #include "QatGenericFunctions/RKIntegrator.h"
-#include "QatGenericFunctions/SimpleIntegrator.h"
-#include "QatGenericFunctions/QuadratureRule.h"
+#include "QatGenericFunctions/SimpleRKStepper.h"
 #include "QatGenericFunctions/FixedConstant.h"
 #include "QatGenericFunctions/PhaseSpace.h"
-#include "QatGenericFunctions/RungeKuttaClassicalSolver.h"
 
 int main (int argc, char * * argv) {
 
@@ -59,7 +58,9 @@ int main (int argc, char * * argv) {
   GENFUNCTION   x_rk = *integrator1.getFunction(X);
   GENFUNCTION   n_rk = *integrator1.getFunction(N);
 
-  SimpleIntegrator integrator2(0,1,MidpointRule());
+  MidpointTableau midpoint;
+  SimpleRKStepper stepper(midpoint,0.001); // 0.001=stepsize
+  RKIntegrator integrator2(&stepper);
   integrator2.addDiffEquation(&DXDT,"X0",0);
   integrator2.addDiffEquation(&DNDT,"P0", 1);
   GENFUNCTION   x_e = *integrator2.getFunction(X);

@@ -7,10 +7,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-
 #include <cmath>
 #include <random>
 #include "QatGenericFunctions/Exp.h"
+#include "QatGenericFunctions/Erf.h"
 #include "QatGenericFunctions/Variable.h"
 #include "QatPlotting/PlotFunction1D.h"
 #include "QatDataAnalysis/Hist1D.h"
@@ -48,22 +48,30 @@ int main (int argc, char * * argv) {
 
   double tau = 3.0;
   double sigma = 2.0;
+
+  // Histogram
+  Hist1D histogram("CONV", 100, -10.,10.);
+
   
   // Plot Function
   Variable u;
-  GENFUNCTION f=tau/sqrt(sigma)*Exp()(-tau*u+2*tau*tau/sigma);
-  PlotFunction1D pf = f;
+  //GENFUNCTION f=tau/sqrt(sigma)*Exp()(-tau*u+2*tau*tau/sigma);
+  //PlotFunction1D pf = f;
+  Erf erf;
+  GENFUNCTION erfc=1.0-erf;
+  Exp exp;
+  GENFUNCTION f=0.5/tau*exp(sigma*sigma/2/tau/tau-u/tau)*erfc(1.0/sqrt(2.0)*(sigma/tau-u/sigma));
+  PlotFunction1D pf = f*histogram.binWidth()*100000;
+
   {
     PlotFunction1D::Properties prop;
     prop.pen.setWidth(3);
     pf.setProperties(prop);
   }
 
-  // Histogram
   EngineType e;
-  Hist1D histogram("CONV", 100, 0.,10.);
   
-  std::exponential_distribution p(tau);
+  std::exponential_distribution p(1/tau);
   std::normal_distribution n(0.,sigma);
   for(int i=0;i<100000;i++){
     double x1 = p(e);
@@ -80,9 +88,9 @@ int main (int argc, char * * argv) {
   }
 
   // Rejection Method
-  double pmax = tau/sqrt(sigma)*exp(2.*tau*tau/sigma);
-  std::uniform_real_distribution<double> rx(-0., 10), ry(0.,pmax);
-  Hist1D hx("X", 100, 0., 20.);
+  double pmax = 1/sigma/tau; //tau/sqrt(sigma)*exp(2.*tau*tau/sigma);
+  std::uniform_real_distribution<double> rx(-10., 10), ry(0.,pmax);
+  Hist1D hx("X", 100, -10., 10.);
   for (int i=0;i<1000000;i++){
     double x=rx(e);
     double y=ry(e);
@@ -91,6 +99,10 @@ int main (int argc, char * * argv) {
     }
   }
 
+ // Normalize hx to histogram:
+  hx*=(histogram.sum()/hx.sum());
+
+  
   PlotHist1D px=hx;
   {
     PlotHist1D::Properties prop;

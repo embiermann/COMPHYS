@@ -81,7 +81,7 @@ int main (int argc, char * * argv) {
     view.add(&p);
 
     double mC = 1370; // MeV/c^2
-    double hbarC = 1.973E-15; // MeV*mm
+    double hbarC = 1.973E2; // MeV*fm
     GENFUNCTION integrand=Sqrt()(mC*T)/(M_PI*hbarC);
 
     RombergIntegrator integrator(0.0,rmax, RombergIntegrator::OPEN);
@@ -103,7 +103,7 @@ int main (int argc, char * * argv) {
 	         << PlotStream::Center()
 	         << PlotStream::Family("Sans Serif")
 	         << PlotStream::Size(16)
-                 << "r [mm]"
+                 << "r [fm]"
 	         << PlotStream::EndP();
   
     PlotStream yLabelStream(view.yLabelTextEdit());

@@ -3,7 +3,8 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 // Coin includes
 #include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoCone.h>
+#include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodes/SoMaterial.h>
 // Inventor includes:
 #include <QApplication>
 #include <QWidget>
@@ -39,9 +40,30 @@ int main(int argc, char **argv)
   SoSeparator *root = new SoSeparator;
   root->ref();
 
-  SoCone *cone = new SoCone;
-  cone->bottomRadius.setValue(10.);
-  root->addChild(cone);
+  //SoCone *cone = new SoCone;
+  //cone->bottomRadius.setValue(10.);
+  //root->addChild(cone);
+
+  SoSphere *bigSphere = new SoSphere;
+  bigSphere->radius.setValue(2.);
+  SoMaterial *red = new SoMaterial;
+  red->diffuseColor.setValue(1.0,0,0);
+
+  SoSeparator *sep1 = new SoSeparator;
+  sep1->addChild(red);
+  sep1->addChild(bigSphere);
+  
+  SoSphere *smallSphere = new SoSphere;
+  SoMaterial *white = new SoMaterial;
+  white->diffuseColor.setValue(1.,1.,1.);
+  smallSphere->radius.setValue(1.);
+
+  SoSeparator *sep2 = new SoSeparator;
+  sep2->addChild(white);
+  sep2->addChild(smallSphere);
+
+  root->addChild(sep1);
+  root->addChild(sep2);
   
   // Initialize an examiner viewer:
   SoQtExaminerViewer * eviewer = new SoQtExaminerViewer(&mainwin);

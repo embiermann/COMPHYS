@@ -11,6 +11,7 @@
 #include <cmath>
 #include <random>
 #include "QatGenericFunctions/AssociatedLegendre.h"
+#include "QatGenericFunctions/Square.h"
 #include "QatDataAnalysis/Hist1D.h"
 #include "QatPlotting/PlotFunction1D.h"
 #include "QatPlotting/PlotHist1D.h"
@@ -46,22 +47,16 @@ int main (int argc, char * * argv) {
   rect.setYmax(1.0);
 
   // Define Function
-  GENFUNCTION f = sqrt(3)/sqrt(8)   * AssociatedLegendre(1,0)
-                - sqrt(7)/sqrt(6)   * AssociatedLegendre(3,0)
-                + sqrt(11)/sqrt(14) * AssociatedLegendre(5,0)
-                - sqrt(15)/sqrt(6)  * AssociatedLegendre(7,0);
-  PlotFunction1D pf = f;
-  {
-    PlotFunction1D::Properties prop;
-    prop.pen.setWidth(3);
-    pf.setProperties(prop);
-  }
+  GENFUNCTION f = Square()(sqrt(3)/sqrt(8)   * AssociatedLegendre(1,0)
+			   - sqrt(7)/sqrt(6)   * AssociatedLegendre(3,0)
+			   + sqrt(11)/sqrt(24) * AssociatedLegendre(5,0)
+			   - sqrt(15)/sqrt(6)  * AssociatedLegendre(7,0));
 
   // Create Data
   EngineType e;
-  double pmax = sqrt(3)/sqrt(8)   + sqrt(7)/sqrt(6)
-	      + sqrt(11)/sqrt(14) + sqrt(15)/sqrt(6);
-  std::uniform_real_distribution<double> rx(-1., 1.), ry(-pmax,pmax);
+  double pmax = 16; // sqrt(3)/sqrt(8)   + sqrt(7)/sqrt(6)
+  // + sqrt(11)/sqrt(14) + sqrt(15)/sqrt(6);
+  std::uniform_real_distribution<double> rx(-1., 1.), ry(0,pmax);
   Hist1D hx("X", 100, -1., 1.);
   for (int i=0;i<1000000;i++){
     double x=rx(e);
@@ -84,6 +79,14 @@ int main (int argc, char * * argv) {
     px.setProperties(prop);
   }
 
+  PlotFunction1D pf = f*hx.binWidth()*hx.sum();
+  {
+    PlotFunction1D::Properties prop;
+    prop.pen.setWidth(3);
+    pf.setProperties(prop);
+  }
+
+  
   // Plot View
 
   PlotView view(px.rectHint());

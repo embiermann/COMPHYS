@@ -33,7 +33,7 @@
 class SignalCatcher : public QObject {
   Q_OBJECT
 public slots:
-  void quit() {
+  void quit(){
     exit(0);
   }
 };

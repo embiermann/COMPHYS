@@ -1,17 +1,35 @@
-#include "QatPlotWidgets/PlotView.h"
-#include "QatPlotting/PlotStream.h"
-#include <QApplication>
+#include "QatPlotting/PlotHist1D.h"
+#include "QatPlotting/PlotProfile.h"
+#include "QatPlotting/PlotFunction1D.h"
+#include "QatPlotting/PlotPoint.h"
+#include "QatPlotting/PlotKey.h"
+#include "QatDataModeling/HistChi2Functional.h"
+#include "QatDataModeling/HistLikelihoodFunctional.h"
+#include "QatDataModeling/MinuitMinimizer.h"
+#include "QatGenericFunctions/Cos.h"
+#include "QatGenericFunctions/Variable.h"
+#include "QatGenericFunctions/Parameter.h"
+#include "QatGenericFunctions/IncompleteGamma.h"
+#include "Eigen/Dense"
+#include "QatGenericFunctions/Variable.h"
 #include <QMainWindow>
+#include <QApplication>
 #include <QToolBar>
 #include <QAction>
-#include <cstdlib>
+#include <QtGui>
 #include <iostream>
 #include <string>
+#include <random>
+#include <map>
+#include <cmath>
+#include <fstream>
 
 #include "EarthMars.h"
 #include "IKE.h"
 #include <fstream>
 int main (int argc, char * * argv) {
+
+  using namespace Genfun;
 
   // Automatically generated:-------------------------:
 
@@ -85,6 +103,50 @@ int main (int argc, char * * argv) {
 
   // Close File
   fin.close();
+
+  // Add points to histogram
+  Hist1D histEarth("EarthDat", 100, 0, 1);
+  histEarth.accumulate(earthmars.earth);
+  Hist1D histMars("MarsDat", 100, 0, 1);
+  histMars.accumulate(earthmars.mars);
+
+  // Hist Functional
+  HistChi2Functional ofEarth(&histEarth);
+  HistChi2Functional ofMars(&histMars);
+
+  // Modeling Functions r(phi)
+  Cos cos;
+  Variable PHI;
+  GENFUNCTION EarthOrbit = earthmars.a1*(1.-earthmars.e1*earthmars.e1)/(1.-PHI);
+  GENFUNCTION MarsOrbit = earthmars.a2*(1.-earthmars.e2*earthmars.e2)/(1.-PHI);
+
+  // Minimize likelihood
+  bool verbose=true;
+  MinuitMinimizer minimizer1(verbose);
+  minimizer1.addParameter(&earthmars.e1);
+  minimizer1.addParameter(&earthmars.a1);
+  //minimizer1.addParameter(&earthmars.t1);
+  //minimizer1.addParameter(&earthmars.phi1);
+  //minimizer1.addParameter(&earthmars.theta1);
+  //minimizer1.addParameter(&earthmars.psi1);
+  minimizer1.addStatistic(&ofEarth, &EarthOrbit);
+  minimizer1.minimize();
+
+  MinuitMinimizer minimizer2(verbose);
+  minimizer2.addParameter(&earthmars.e2);
+  minimizer2.addParameter(&earthmars.a2);
+  minimizer2.addParameter(&earthmars.phi2);
+  //minimizer2.addParameter(&earthmars.t2);
+  //minimizer2.addParameter(&earthmars.theta2);
+  //minimizer2.addParameter(&earthmars.psi2);
+  //minimizer2.addStatistic(&ofMars, &MarsOrbit);
+  minimizer2.minimize();
+
+  // Print Values
+  std::cout<<"a_earth = "<<minimizer1.getValue(&a1)<<std::endl;
+  std::cout<<"a_mars = "<<minimizer1.getValue(&a2)<<std::endl;
+  std::cout<<"e_earth = "<<<<minimizer1.getValue(&e1)<<std::endl;
+  std::cout<<"e_mars = "<<<<minimizer1.getValue(&e2)<<std::endl;
 
   PlotView view(rect);
   window.setCentralWidget(&view);
